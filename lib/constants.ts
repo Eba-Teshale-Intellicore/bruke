@@ -25,12 +25,12 @@ export const navButtons = [
 
 export const programs = [
   {
-    title: "Strength Training",
-    description: "Build muscle and increase your power with our comprehensive training programs.",
-    image: "/bruke.pg",   // <-- use imported image
+    title: "Happy Birthday 🎉",
+    description:
+      "Wishing you a day filled with joy, love, and endless blessings. May your year ahead shine with success, peace, and beautiful moments. You are truly special—keep growing, keep smiling, and keep inspiring the world.",
+    image: "/bruke.png",
   },
 ];
-
 export const images = [
     {
         src: "/gallery1.jpg",
