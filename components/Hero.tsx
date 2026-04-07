@@ -62,12 +62,37 @@ const jesusQuiz = [
   },
 ];
 
+const birthdayNatureQuiz = [
+  {
+    question: "Which animal represents courage and strength?",
+    options: ["Lion", "Rabbit", "Deer", "Owl"],
+    answer: "Lion",
+  },
+  {
+    question: "Which bird symbolizes vision and soaring high in life?",
+    options: ["Eagle", "Sparrow", "Peacock", "Falcon"],
+    answer: "Eagle",
+  },
+  {
+    question: "Which creature reminds us of transformation and new beginnings?",
+    options: ["Butterfly", "Cat", "Wolf", "Dolphin"],
+    answer: "Butterfly",
+  },
+  {
+    question: "Which animal shows loyalty and love, like the blessings of God?",
+    options: ["Dog", "Horse", "Elephant", "Swan"],
+    answer: "Dog",
+  },
+];
+
 export default function Hero() {
   const [showSurprise, setShowSurprise] = useState(false);
   const [emojis, setEmojis] = useState<{ id: number; emoji: string; delay: number }[]>([]);
   const [current, setCurrent] = useState(0);
   const [showQuiz, setShowQuiz] = useState(false);
   const [showCard, setShowCard] = useState(false);
+  const [activeQuiz, setActiveQuiz] = useState<'jesus' | 'nature'>('jesus');
+  const [cardCode, setCardCode] = useState("");
 
   useEffect(() => {
     const birthdayEmojis = ["🎂", "🎈", "🎉", "✨", "🎁", "🥳"];
@@ -79,17 +104,35 @@ export default function Hero() {
     setEmojis(newEmojis);
   }, []);
 
+  const currentQuiz = activeQuiz === 'jesus' ? jesusQuiz : birthdayNatureQuiz;
+
   const handleAnswer = (option: string) => {
-    if (option === jesusQuiz[current].answer) {
-      if (current === jesusQuiz.length - 1) {
+    if (option === currentQuiz[current].answer) {
+      if (current === currentQuiz.length - 1) {
+        // Quiz finished
+        if (activeQuiz === 'jesus') {
+          setCardCode("81409560629723");
+        } else {
+          setCardCode("81039720895820");
+        }
         setShowCard(true);
         setShowQuiz(false);
       } else {
         setCurrent(current + 1);
       }
     } else {
-      // Using a custom UI instead of alert would be better, but keeping logic for now
       console.log("Oops! Try again 🙏");
+    }
+  };
+
+  const handleNextPhase = () => {
+    if (activeQuiz === 'jesus') {
+      setActiveQuiz('nature');
+      setCurrent(0);
+      setShowQuiz(true);
+      setShowCard(false);
+    } else {
+      setShowCard(false);
     }
   };
 
@@ -140,7 +183,11 @@ export default function Hero() {
           <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
             <Button 
               size="lg"
-              onClick={() => setShowQuiz(true)}
+              onClick={() => {
+                setActiveQuiz('jesus');
+                setCurrent(0);
+                setShowQuiz(true);
+              }}
               className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold px-8 py-6 text-lg rounded-full shadow-lg shadow-yellow-400/20 transition-all hover:scale-105 active:scale-95 group"
             >
               <Gift className="mr-2 w-5 h-5 group-hover:rotate-12 transition-transform" />
@@ -199,11 +246,14 @@ export default function Hero() {
               exit={{ scale: 0.8, y: 50 }}
               className="bg-slate-900 p-8 rounded-3xl max-w-md w-full shadow-2xl text-center border border-white/10"
             >
+              <div className="mb-4 text-yellow-400 text-xs font-bold uppercase tracking-widest">
+                {activeQuiz === 'jesus' ? 'Phase 1: Biblical Wisdom' : 'Phase 2: Nature & Creation'}
+              </div>
               <h2 className="text-2xl font-bold text-white mb-6">
-                {jesusQuiz[current].question}
+                {currentQuiz[current].question}
               </h2>
               <div className="grid gap-4">
-                {jesusQuiz[current].options.map((option) => (
+                {currentQuiz[current].options.map((option) => (
                   <Button
                     key={option}
                     onClick={() => handleAnswer(option)}
@@ -213,7 +263,7 @@ export default function Hero() {
                   </Button>
                 ))}
               </div>
-              <p className="mt-6 text-gray-400 text-sm">Question {current + 1} of {jesusQuiz.length}</p>
+              <p className="mt-6 text-gray-400 text-sm">Question {current + 1} of {currentQuiz.length}</p>
             </motion.div>
           </motion.div>
         )}
@@ -235,18 +285,22 @@ export default function Hero() {
               className="max-w-sm w-full"
             >
               <Card className="bg-white p-8 rounded-3xl text-center shadow-2xl">
-                <h2 className="text-2xl font-bold mb-4 text-slate-900">Congratulations! 🎉</h2>
+                <h2 className="text-2xl font-bold mb-4 text-slate-900">
+                  {activeQuiz === 'jesus' ? 'Great Job! 🎉' : 'Final Victory! 🏆'}
+                </h2>
                 <p className="text-gray-600 mb-8">
-                  You answered all questions correctly! Here’s your special gift code:
+                  {activeQuiz === 'jesus' 
+                    ? 'You mastered the first challenge! Here is your first code:' 
+                    : 'You have completed all challenges! Here is your final Ethio card code:'}
                 </p>
                 <div className="p-6 bg-yellow-400 rounded-2xl font-mono text-2xl font-bold text-black tracking-wider shadow-inner">
-                  120394568843
+                  {cardCode}
                 </div>
                 <Button
-                  onClick={() => setShowCard(false)}
+                  onClick={handleNextPhase}
                   className="mt-8 w-full bg-indigo-600 text-white py-4 rounded-xl hover:bg-indigo-700"
                 >
-                  Close
+                  {activeQuiz === 'jesus' ? 'Next: Nature Quiz 🌿' : 'Close'}
                 </Button>
               </Card>
             </motion.div>

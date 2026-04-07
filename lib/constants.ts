@@ -28,7 +28,7 @@ export const programs = [
     title: "Happy Birthday 🎉",
     description:
       "Wishing you a day filled with joy, love, and endless blessings. May your year ahead shine with success, peace, and beautiful moments. You are truly special—keep growing, keep smiling, and keep inspiring the world.",
-    image: "/bruke.pg",
+    image: "/bruke.png",
   },
 ];
 export const images = [
