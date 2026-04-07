@@ -1,13 +1,11 @@
 "use client";
-
 import { motion, AnimatePresence } from "framer-motion";
 import { Card } from "./ui/card";
 import { Button } from "./ui/button";
 import { programs } from "@/lib/constants";
-import { Gift, Heart, Star, Cake, PartyPopper } from "lucide-react";
-import { useState, useMemo } from "react";
-import Image from "next/image";
-import { useEffect } from "react";
+import { Gift, Star } from "lucide-react";
+import { useState, useEffect } from "react";
+import ThemeToggle from "./ThemeToggle";
 
 interface FloatingEmojiProps {
   emoji: string;
@@ -36,9 +34,40 @@ const FloatingEmoji = ({ emoji, delay }: FloatingEmojiProps) => (
   </motion.div>
 );
 
+const jesusQuiz = [
+  {
+    question: "Who baptized Jesus?",
+    options: ["John the Baptist", "Peter", "Paul", "Moses"],
+    answer: "John the Baptist",
+  },
+  {
+    question: "Where was Jesus born?",
+    options: ["Nazareth", "Bethlehem", "Jerusalem", "Capernaum"],
+    answer: "Bethlehem",
+  },
+  {
+    question: "What miracle did Jesus perform at the wedding?",
+    options: ["Walked on water", "Turned water into wine", "Fed 5000", "Healed a blind man"],
+    answer: "Turned water into wine",
+  },
+  {
+    question: "Who betrayed Jesus?",
+    options: ["Peter", "Judas Iscariot", "Thomas", "John"],
+    answer: "Judas Iscariot",
+  },
+  {
+    question: "How many days was Jesus in the desert?",
+    options: ["30", "40", "50", "20"],
+    answer: "40",
+  },
+];
+
 export default function Hero() {
   const [showSurprise, setShowSurprise] = useState(false);
   const [emojis, setEmojis] = useState<{ id: number; emoji: string; delay: number }[]>([]);
+  const [current, setCurrent] = useState(0);
+  const [showQuiz, setShowQuiz] = useState(false);
+  const [showCard, setShowCard] = useState(false);
 
   useEffect(() => {
     const birthdayEmojis = ["🎂", "🎈", "🎉", "✨", "🎁", "🥳"];
@@ -50,14 +79,28 @@ export default function Hero() {
     setEmojis(newEmojis);
   }, []);
 
+  const handleAnswer = (option: string) => {
+    if (option === jesusQuiz[current].answer) {
+      if (current === jesusQuiz.length - 1) {
+        setShowCard(true);
+        setShowQuiz(false);
+      } else {
+        setCurrent(current + 1);
+      }
+    } else {
+      // Using a custom UI instead of alert would be better, but keeping logic for now
+      console.log("Oops! Try again 🙏");
+    }
+  };
+
   return (
     <section
       className="min-h-screen relative flex items-center justify-center overflow-hidden bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900"
       id="hero"
-    >
+    >                         
       {/* Background Elements */}
       <div className="absolute inset-0 bg-black/30 backdrop-blur-[2px]"></div>
-      
+            
       {/* Floating Emojis */}
       {emojis.map((e) => (
         <FloatingEmoji key={e.id} emoji={e.emoji} delay={e.delay} />
@@ -84,31 +127,25 @@ export default function Hero() {
 
           <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
             Happy Birthday, <br />
+            <ThemeToggle />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-400 animate-gradient">
               Bruke!
             </span>
           </h1>
           
           <p className="text-xl md:text-2xl text-gray-200 mb-8 max-w-xl mx-auto lg:mx-0 leading-relaxed">
-            "May GOd bless you today and always, filling your path with His infite light!"
+            "May God bless you today and always, filling your path with His infinite light!"
           </p>
 
           <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
-            {/* <Button 
+            <Button 
               size="lg"
-              onClick={() => setShowSurprise(true)}
+              onClick={() => setShowQuiz(true)}
               className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold px-8 py-6 text-lg rounded-full shadow-lg shadow-yellow-400/20 transition-all hover:scale-105 active:scale-95 group"
             >
               <Gift className="mr-2 w-5 h-5 group-hover:rotate-12 transition-transform" />
               Open Surprise 🎁
-            </Button> */}
-            {/* <Button 
-              variant="outline"
-              size="lg"
-              className="border-white/20 text-white hover:bg-white/10 px-8 py-6 text-lg rounded-full backdrop-blur-md"
-            >
-              View Gallery
-            </Button> */}
+            </Button>
           </div>
         </motion.div>
 
@@ -147,57 +184,71 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Surprise Modal */}
+      {/* Quiz Modal */}
       <AnimatePresence>
-        {showSurprise && (
+        {showQuiz && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/80 backdrop-blur-xl"
-            onClick={() => setShowSurprise(false)}
           >
             <motion.div
               initial={{ scale: 0.8, y: 50 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.8, y: 50 }}
-              className="bg-gradient-to-br from-indigo-600 to-purple-700 p-1 rounded-3xl max-w-lg w-full shadow-2xl"
-              onClick={(e) => e.stopPropagation()}
+              className="bg-slate-900 p-8 rounded-3xl max-w-md w-full shadow-2xl text-center border border-white/10"
             >
-              <div className="bg-slate-900 rounded-[22px] p-8 text-center relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600"></div>
-                
-                <div className="mb-6 inline-flex p-4 rounded-full bg-yellow-400/10 text-yellow-400">
-                  <PartyPopper className="w-12 h-12" />
-                </div>
-                
-                <h2 className="text-3xl font-bold text-white mb-4">Surprise! 🎊</h2>
-                <p className="text-gray-300 text-lg mb-8">
-                  "May your birthday be as incredible as you are. Here's to another year of making magic happen!"
-                </p>
-                
-                <div className="grid grid-cols-3 gap-4 mb-8">
-                  <div className="p-3 rounded-xl bg-white/5 border border-white/10">
-                    <Cake className="w-6 h-6 text-pink-400 mx-auto mb-2" />
-                    <span className="text-xs text-gray-400">Sweetness</span>
-                  </div>
-                  <div className="p-3 rounded-xl bg-white/5 border border-white/10">
-                    <Heart className="w-6 h-6 text-red-400 mx-auto mb-2" />
-                    <span className="text-xs text-gray-400">Love</span>
-                  </div>
-                  <div className="p-3 rounded-xl bg-white/5 border border-white/10">
-                    <Star className="w-6 h-6 text-yellow-400 mx-auto mb-2" />
-                    <span className="text-xs text-gray-400">Success</span>
-                  </div>
-                </div>
-
-                <Button 
-                  onClick={() => setShowSurprise(false)}
-                  className="w-full bg-white text-black hover:bg-gray-200 font-bold py-6 rounded-xl"
-                >
-                  Close & Party On! 🕺
-                </Button>
+              <h2 className="text-2xl font-bold text-white mb-6">
+                {jesusQuiz[current].question}
+              </h2>
+              <div className="grid gap-4">
+                {jesusQuiz[current].options.map((option) => (
+                  <Button
+                    key={option}
+                    onClick={() => handleAnswer(option)}
+                    className="w-full bg-indigo-600 text-white py-4 rounded-xl hover:bg-indigo-700 transition-colors"
+                  >
+                    {option}
+                  </Button>
+                ))}
               </div>
+              <p className="mt-6 text-gray-400 text-sm">Question {current + 1} of {jesusQuiz.length}</p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Mobile Card Popup */}
+      <AnimatePresence>
+        {showCard && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/80 backdrop-blur-xl"
+          >
+            <motion.div
+              initial={{ scale: 0.8, y: 50 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.8, y: 50 }}
+              className="max-w-sm w-full"
+            >
+              <Card className="bg-white p-8 rounded-3xl text-center shadow-2xl">
+                <h2 className="text-2xl font-bold mb-4 text-slate-900">Congratulations! 🎉</h2>
+                <p className="text-gray-600 mb-8">
+                  You answered all questions correctly! Here’s your special gift code:
+                </p>
+                <div className="p-6 bg-yellow-400 rounded-2xl font-mono text-2xl font-bold text-black tracking-wider shadow-inner">
+                  120394568843
+                </div>
+                <Button
+                  onClick={() => setShowCard(false)}
+                  className="mt-8 w-full bg-indigo-600 text-white py-4 rounded-xl hover:bg-indigo-700"
+                >
+                  Close
+                </Button>
+              </Card>
             </motion.div>
           </motion.div>
         )}
