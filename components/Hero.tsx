@@ -111,9 +111,11 @@ export default function Hero() {
       if (current === currentQuiz.length - 1) {
         // Quiz finished
         if (activeQuiz === 'jesus') {
-          setCardCode("81409560629723");
+          setCardCode("00000000000000");
+          // 81409560629723
         } else {
-          setCardCode("81039720895820");
+          setCardCode("00000000000000");
+          // 81039720895820
         }
         setShowCard(true);
         setShowQuiz(false);
